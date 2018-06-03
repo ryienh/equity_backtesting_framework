@@ -96,20 +96,27 @@ class Portfolio():
     #Attributes
     __start_cash = None
     __current_cash = None
-    __end_cash = None
     __stocks_owned = {}
     __number_of_trades = None
 
     #Constructor
     def __init__(self, start_cash):
-        self.__start_cash = start_worth
-        self.__current_cash = start_worth
+        self.__start_cash = start_cash
+        self.__current_cash = start_cash
         self.__number_of_trades = 0
 
     #Methods
+    def get_start_cash(self):
+        return self.__start_cash
+    def get_current_cash(self):
+        return self.__current_cash
+    def get_stocks_owned(self):
+        return self.__stocks_owned
+    def get_number_of_trades(self):
+        return self.__number_of_trades
     def buy_stock_at_close(self, stock, date, n):
         cost = stock.price_close(date) * n
-        if cost > self.__current_worth:
+        if cost > self.__current_cash:
             return
         else:
             self.__current_cash -= cost
@@ -122,6 +129,9 @@ class Portfolio():
         if self.__stocks_owned[stock.get_symbol()] == 0:
             del self.__stocks_owned[stock.get_symbol()]
         self.__number_of_trades += 1
+    def buy_max_possible(self, stock, date):
+        while self.__start_cash >= stock.price_close(date):
+            self.buy_stock_at_close(stock, date, 1)
     def cash_out(self, date):
         for key, value in self.__stocks_owned.items():
             sell_stock_at_close(key, date, value)

@@ -32,6 +32,21 @@ class test_market(unittest.TestCase):
         intc = Stock('intc', '2018-01-01', '2018-06-01')
         self.assertAlmostEqual(intc.percent_change('2018-06-01'), .0222063)
         self.assertAlmostEqual(intc.percent_change('2018-01-01', '2018-06-01'), .230702889)
+    #Portfolio class
+    def test_portfolio_constructor(self):
+        jp_morgan = Portfolio(5000)
+        self.assertEqual(jp_morgan.get_start_cash(), 5000)
+        self.assertEqual(jp_morgan.get_current_cash(), 5000)
+        self.assertEqual(jp_morgan.get_stocks_owned(), {})
+        self.assertEqual(jp_morgan.get_number_of_trades(), 0)
+    def test_buy_and_sell_stock_at_close(self):
+        robin_hood = Portfolio(10000)
+        apple = Stock('aapl', '2017-01-01', '2018-06-01')
+        robin_hood.buy_stock_at_close(apple, '2017-01-01', 10)
+        self.assertEqual(robin_hood.get_start_cash(), 10000)
+        self.assertAlmostEqual(robin_hood.get_current_cash(), 10000 - 116.15*10)
+        self.assertEqual(robin_hood.get_stocks_owned(), {'aapl':10})
+        self.assertEqual(robin_hood.get_number_of_trades(), 1)
 
 
 if __name__ == '__main__':
