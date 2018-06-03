@@ -73,17 +73,42 @@ class Stock():
         return self.__end_date
     def get_readable(self):
         return self.__readable
+    def price_open(self, date):
+        x = self.__readable.at[next_trading_day(self.__symbol, date), 'open']
+        return x
+    def price_close(self, date):
+        x = self.__readable.at[next_trading_day(self.__symbol, date), 'close']
+        return x
     def percent_change(self, begin, end=None):
         if end == None:
-            print(self.__symbol)
             price_1 = self.__readable.at[next_trading_day(self.__symbol, begin), 'open']
             price_2 = self.__readable.at[next_trading_day(self.__symbol, begin), 'close']
             pc_change = (price_2 - price_1)/price_1
             return pc_change
+        else:
+            price_1 = self.__readable.at[next_trading_day(self.__symbol, begin), 'open']
+            price_2 = self.__readable.at[prev_trading_day(self.__symbol, end), 'close']
+            pc_change = (price_2 - price_1)/price_1
+            return pc_change
 
-apple = Stock(symbol='aapl', start_date='2017-01-01', end_date='2018-01-01')
+apple = Stock(symbol='aapl', start_date='2017-01-01', end_date='2018-03-01')
 print(apple.percent_change('2017-02-02'))
 
 #Contains the worth and components of a particular stock portfolio
 class Portfolio():
-    pass
+    #Attributes
+    __start_worth = None
+    __current_worth = None
+    __end_worth = None
+    __stocks_owned = []
+    __number_of_trades = None
+
+    #Constructor
+    def __init__(self, start_worth):
+        self.__start_worth = start_worth
+        self.__current_worth = start_worth
+        self.__number_of_trades = 0
+
+    #Methods
+    def buy_stock_at_close(self, stock, date, n):
+        cost = stock.price(date) * n
