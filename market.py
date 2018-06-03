@@ -91,24 +91,37 @@ class Stock():
             pc_change = (price_2 - price_1)/price_1
             return pc_change
 
-apple = Stock(symbol='aapl', start_date='2017-01-01', end_date='2018-03-01')
-print(apple.percent_change('2017-02-02'))
-
 #Contains the worth and components of a particular stock portfolio
 class Portfolio():
     #Attributes
-    __start_worth = None
-    __current_worth = None
-    __end_worth = None
-    __stocks_owned = []
+    __start_cash = None
+    __current_cash = None
+    __end_cash = None
+    __stocks_owned = {}
     __number_of_trades = None
 
     #Constructor
-    def __init__(self, start_worth):
-        self.__start_worth = start_worth
-        self.__current_worth = start_worth
+    def __init__(self, start_cash):
+        self.__start_cash = start_worth
+        self.__current_cash = start_worth
         self.__number_of_trades = 0
 
     #Methods
     def buy_stock_at_close(self, stock, date, n):
-        cost = stock.price(date) * n
+        cost = stock.price_close(date) * n
+        if cost > self.__current_worth:
+            return
+        else:
+            self.__current_cash -= cost
+            self.__stocks_owned[stock.get_symbol()] = n
+            self.__number_of_trades += 1
+    def sell_stock_at_close(self, stock, date, n):
+        cost = stock.price_close(date) * n
+        self.__current_cash += cost
+        self.__stocks_owned[stock.get_symbol()] = self.__stocks_owned[stock.get_symbol()] - n
+        if self.__stocks_owned[stock.get_symbol()] == 0:
+            del self.__stocks_owned[stock.get_symbol()]
+        self.__number_of_trades += 1
+    def cash_out(self, date):
+        for key, value in self.__stocks_owned.items():
+            sell_stock_at_close(key, date, value)
