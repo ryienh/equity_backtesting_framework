@@ -96,7 +96,7 @@ class Portfolio():
     #Attributes
     __start_cash = None
     __current_cash = None
-    __stocks_owned = {}
+    __stocks_owned = None
     __number_of_trades = None
 
     #Constructor
@@ -104,6 +104,7 @@ class Portfolio():
         self.__start_cash = start_cash
         self.__current_cash = start_cash
         self.__number_of_trades = 0
+        self.__stocks_owned = {}
 
     #Methods
     def get_start_cash(self):
