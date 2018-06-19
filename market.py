@@ -118,10 +118,13 @@ class Portfolio():
     def buy_stock_at_close(self, stock, date, n):
         cost = stock.price_close(date) * n
         if cost > self.__current_cash:
-            return
+            raise ValueError('Stock too expensive')
         else:
             self.__current_cash -= cost
-            self.__stocks_owned[stock.get_symbol()] = n
+            if len(self.__stocks_owned) == 0:
+                self.__stocks_owned[stock.get_symbol()] = n
+            else:
+                self.__stocks_owned[stock.get_symbol()] += n
             self.__number_of_trades += 1
     def sell_stock_at_close(self, stock, date, n):
         cost = stock.price_close(date) * n
@@ -131,7 +134,7 @@ class Portfolio():
             del self.__stocks_owned[stock.get_symbol()]
         self.__number_of_trades += 1
     def buy_max_possible(self, stock, date):
-        while self.__start_cash >= stock.price_close(date):
+        while self.__current_cash >= stock.price_close(date):
             self.buy_stock_at_close(stock, date, 1)
     def cash_out(self, date):
         for key, value in self.__stocks_owned.items():
