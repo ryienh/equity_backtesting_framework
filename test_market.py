@@ -39,7 +39,6 @@ class test_market(unittest.TestCase):
         self.assertEqual(jp_morgan.get_current_cash(), 5000)
         self.assertEqual(jp_morgan.get_stocks_owned(), {})
         self.assertEqual(jp_morgan.get_number_of_trades(), 0)
-    
     def test_buy_and_sell_stock_at_close(self):
         robin_hood = Portfolio(10000)
         apple = Stock('aapl', '2017-01-01', '2018-06-01')
