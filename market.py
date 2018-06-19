@@ -121,10 +121,13 @@ class Portfolio():
             raise ValueError('Stock too expensive')
         else:
             self.__current_cash -= cost
-            if len(self.__stocks_owned) == 0:
+
+            stock_name = stock.get_symbol()
+            if not stock_name in self.__stocks_owned or self.__stocks_owned[stock_name] == 0:
                 self.__stocks_owned[stock.get_symbol()] = n
             else:
                 self.__stocks_owned[stock.get_symbol()] += n
+
             self.__number_of_trades += 1
     def sell_stock_at_close(self, stock, date, n):
         cost = stock.price_close(date) * n
