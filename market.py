@@ -137,5 +137,7 @@ class Portfolio():
         while self.__current_cash >= stock.price_close(date):
             self.buy_stock_at_close(stock, date, 1)
     def cash_out(self, date):
-        for key, value in self.__stocks_owned.items():
-            sell_stock_at_close(key, date, value)
+        static_stocks_owned = self.__stocks_owned.copy().items()
+        for key, value in static_stocks_owned:
+            key = Stock(key, date, date)
+            self.sell_stock_at_close(key, date, value)
