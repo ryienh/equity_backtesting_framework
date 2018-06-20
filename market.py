@@ -147,10 +147,8 @@ class Portfolio():
             del self.__stocks_owned[stock.get_symbol()]
         self.__number_of_trades += 1
     def buy_max_possible(self, stock, date):
-        n = 0
-        while self.__current_cash >= stock.price_close(date)*n:
-            n += 1
-        self.buy_stock_at_close(stock, date, n-1)
+        n = self.__current_cash // stock.price_close(date)
+        self.buy_stock_at_close(stock, date, int(n))
 
     def cash_out(self, date):
         static_stocks_owned = self.__stocks_owned.copy().items()
