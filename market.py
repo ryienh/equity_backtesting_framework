@@ -33,6 +33,14 @@ def prev_trading_day(symbol, date):
         date = date - dt.timedelta(days=1)
     return str(date)
 
+def readable_data_exists(ticker):
+    if not isinstance(ticker, str):
+        raise TypeError('Ticker must be passed as string.')
+    ticker = ticker.lower()
+    if os.path.isfile(ticker+'Readable.csv'):
+        return True
+    return False
+
 #Set of classes which will simulate a portfolio and the stockmarket
 
 #Contains the historical and attribute information of any stock in the BZ API
@@ -45,7 +53,9 @@ class Stock():
 
     #Constructor
     def __init__(self, symbol, start_date, end_date):
-        web.import_readable(symbol)
+        if not readable_data_exists:
+            web.import_readable(symbol)
+
         df = pd.read_csv(symbol+"Readable.csv")
 
         new_dates = df['readable'].values.tolist()
@@ -147,4 +157,3 @@ class Portfolio():
         for key, value in static_stocks_owned:
             key = Stock(key, date, date)
             self.sell_stock_at_close(key, date, value)
-            
