@@ -32,7 +32,6 @@ def prev_trading_day(symbol, date):
     while not date in valid_dates:
         date = date - dt.timedelta(days=1)
     return str(date)
-
 def readable_data_exists(ticker):
     if not isinstance(ticker, str):
         raise TypeError('Ticker must be passed as string.')
@@ -53,8 +52,8 @@ class Stock():
 
     #Constructor
     def __init__(self, symbol, start_date, end_date):
-        if not readable_data_exists:
-            web.import_readable(symbol)
+        #if not readable_data_exists:
+        web.import_readable(symbol)
 
         df = pd.read_csv(symbol+"Readable.csv")
 
@@ -125,6 +124,7 @@ class Portfolio():
         return self.__stocks_owned
     def get_number_of_trades(self):
         return self.__number_of_trades
+
     def buy_stock_at_close(self, stock, date, n):
         cost = stock.price_close(date) * n
         if cost > self.__current_cash:
@@ -146,10 +146,30 @@ class Portfolio():
         if self.__stocks_owned[stock.get_symbol()] == 0:
             del self.__stocks_owned[stock.get_symbol()]
         self.__number_of_trades += 1
+    def buy_stock_at_open(self, stock, date, n):
+        cost = stock.price_open(date) * n
+        if cost > self.__current_cash:
+            raise ValueError('Stock too expensive')
+        else:
+            self.__current_cash -= cost
+
+            stock_name = stock.get_symbol()
+            if not stock_name in self.__stocks_owned or self.__stocks_owned[stock_name] == 0:
+                self.__stocks_owned[stock.get_symbol()] = n
+            else:
+                self.__stocks_owned[stock.get_symbol()] += n
+
+            self.__number_of_trades += 1
+    def sell_stock_at_open(self, stock, date, n):
+        cost = stock.price_open(date) * n
+        self.__current_cash += cost
+        self.__stocks_owned[stock.get_symbol()] = self.__stocks_owned[stock.get_symbol()] - n
+        if self.__stocks_owned[stock.get_symbol()] == 0:
+            del self.__stocks_owned[stock.get_symbol()]
+        self.__number_of_trades += 1
     def buy_max_possible(self, stock, date):
         n = self.__current_cash // stock.price_close(date)
         self.buy_stock_at_close(stock, date, int(n))
-
     def cash_out(self, date):
         static_stocks_owned = self.__stocks_owned.copy().items()
         for key, value in static_stocks_owned:
