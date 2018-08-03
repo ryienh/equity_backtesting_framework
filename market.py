@@ -138,14 +138,16 @@ class Portfolio():
             else:
                 self.__stocks_owned[stock.get_symbol()] += n
 
-            self.__number_of_trades += 1
+            if n > 0:
+                self.__number_of_trades += 1
     def sell_stock_at_close(self, stock, date, n):
         cost = stock.price_close(date) * n
         self.__current_cash += cost
         self.__stocks_owned[stock.get_symbol()] = self.__stocks_owned[stock.get_symbol()] - n
         if self.__stocks_owned[stock.get_symbol()] == 0:
             del self.__stocks_owned[stock.get_symbol()]
-        self.__number_of_trades += 1
+        if n > 0:
+            self.__number_of_trades += 1
     def buy_stock_at_open(self, stock, date, n):
         cost = stock.price_open(date) * n
         if cost > self.__current_cash:
@@ -159,19 +161,29 @@ class Portfolio():
             else:
                 self.__stocks_owned[stock.get_symbol()] += n
 
-            self.__number_of_trades += 1
+            if n > 0:
+                self.__number_of_trades += 1
     def sell_stock_at_open(self, stock, date, n):
         cost = stock.price_open(date) * n
         self.__current_cash += cost
         self.__stocks_owned[stock.get_symbol()] = self.__stocks_owned[stock.get_symbol()] - n
         if self.__stocks_owned[stock.get_symbol()] == 0:
             del self.__stocks_owned[stock.get_symbol()]
-        self.__number_of_trades += 1
-    def buy_max_possible(self, stock, date):
+        if n > 0:
+            self.__number_of_trades += 1
+    def buy_max_possible_at_close(self, stock, date):
         n = self.__current_cash // stock.price_close(date)
         self.buy_stock_at_close(stock, date, int(n))
-    def cash_out(self, date):
+    def buy_max_possible_at_open(self, stock, date):
+        n = self.__current_cash // stock.price_open(date)
+        self.buy_stock_at_open(stock, date, int(n))
+    def cash_out_at_close(self, date):
         static_stocks_owned = self.__stocks_owned.copy().items()
         for key, value in static_stocks_owned:
             key = Stock(key, date, date)
             self.sell_stock_at_close(key, date, value)
+    def cash_out_at_open(self, date):
+        static_stocks_owned = self.__stocks_owned.copy().items()
+        for key, value in static_stocks_owned:
+            key = Stock(key, date, date)
+            self.sell_stock_at_open(key, date, value)

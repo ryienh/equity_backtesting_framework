@@ -106,3 +106,6 @@ venv.bak/
 # csvs
 *.csv
 !constituents.csv
+
+# vscode settings
+.vscode/settings.json
