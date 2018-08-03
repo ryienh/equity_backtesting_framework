@@ -108,4 +108,4 @@ venv.bak/
 !constituents.csv
 
 # vscode settings
-.vscode/settings.json
+.vscode
